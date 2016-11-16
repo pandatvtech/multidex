@@ -10,12 +10,12 @@ import java.util.zip.ZipException;
  * Created by zourongbo on 2016/11/16.
  */
 
-final class ZipUtil {
+final class ZipUtil2 {
     private static final int ENDHDR = 22;
     private static final int ENDSIG = 101010256;
     private static final int BUFFER_SIZE = 16384;
 
-    ZipUtil() {
+    ZipUtil2() {
     }
 
     static long getZipCrc(File apk) throws IOException {
@@ -23,7 +23,7 @@ final class ZipUtil {
 
         long var3;
         try {
-            ZipUtil.CentralDirectory dir = findCentralDirectory(raf);
+            ZipUtil2.CentralDirectory dir = findCentralDirectory(raf);
             var3 = computeCrcOfCentralDir(raf, dir);
         } finally {
             raf.close();
@@ -32,7 +32,7 @@ final class ZipUtil {
         return var3;
     }
 
-    static ZipUtil.CentralDirectory findCentralDirectory(RandomAccessFile raf) throws IOException, ZipException {
+    static ZipUtil2.CentralDirectory findCentralDirectory(RandomAccessFile raf) throws IOException, ZipException {
         long scanOffset = raf.length() - 22L;
         if(scanOffset < 0L) {
             throw new ZipException("File too short to be a zip file: " + raf.length());
@@ -51,7 +51,7 @@ final class ZipUtil {
                     raf.skipBytes(2);
                     raf.skipBytes(2);
                     raf.skipBytes(2);
-                    ZipUtil.CentralDirectory dir = new ZipUtil.CentralDirectory();
+                    ZipUtil2.CentralDirectory dir = new ZipUtil2.CentralDirectory();
                     dir.size = (long)Integer.reverseBytes(raf.readInt()) & 4294967295L;
                     dir.offset = (long)Integer.reverseBytes(raf.readInt()) & 4294967295L;
                     return dir;
@@ -64,7 +64,7 @@ final class ZipUtil {
         }
     }
 
-    static long computeCrcOfCentralDir(RandomAccessFile raf, ZipUtil.CentralDirectory dir) throws IOException {
+    static long computeCrcOfCentralDir(RandomAccessFile raf, ZipUtil2.CentralDirectory dir) throws IOException {
         CRC32 crc = new CRC32();
         long stillToRead = dir.size;
         raf.seek(dir.offset);

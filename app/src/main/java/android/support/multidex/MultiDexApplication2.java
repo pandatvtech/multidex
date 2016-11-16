@@ -7,12 +7,12 @@ import android.content.Context;
  * Created by zourongbo on 2016/11/16.
  */
 
-public class MultiDexApplication extends Application {
-    public MultiDexApplication() {
+public class MultiDexApplication2 extends Application {
+    public MultiDexApplication2() {
     }
 
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        MultiDex.install(this);
+        MultiDex2.install(this);
     }
 }

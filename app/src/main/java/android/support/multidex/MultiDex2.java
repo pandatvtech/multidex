@@ -29,7 +29,7 @@ import dalvik.system.DexFile;
  * Created by zourongbo on 2016/11/16.
  */
 
-public final class MultiDex {
+public final class MultiDex2 {
     static final String TAG = "MultiDex";
     private static final String OLD_SECONDARY_FOLDER_NAME = "secondary-dexes";
     private static final String SECONDARY_FOLDER_NAME;
@@ -40,7 +40,7 @@ public final class MultiDex {
     private static final Set<String> installedApk;
     private static final boolean IS_VM_MULTIDEX_CAPABLE;
 
-    private MultiDex() {
+    private MultiDex2() {
     }
 
     public static void install(Context context) {
@@ -88,12 +88,12 @@ public final class MultiDex {
                     }
 
                     File dexDir = new File(e.dataDir, SECONDARY_FOLDER_NAME);
-                    List files = MultiDexExtractor.load(context, e, dexDir, false);
+                    List files = MultiDexExtractor2.load(context, e, dexDir, false);
                     if(checkValidZipFiles(files)) {
                         installSecondaryDexes(loader, dexDir, files);
                     } else {
                         Log.w("MultiDex", "Files were not valid zip files.  Forcing a reload.");
-                        files = MultiDexExtractor.load(context, e, dexDir, true);
+                        files = MultiDexExtractor2.load(context, e, dexDir, true);
                         if(!checkValidZipFiles(files)) {
                             throw new RuntimeException("Zip files were not valid.");
                         }
@@ -151,11 +151,11 @@ public final class MultiDex {
     private static void installSecondaryDexes(ClassLoader loader, File dexDir, List<File> files) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException, IOException {
         if(!files.isEmpty()) {
             if(Build.VERSION.SDK_INT >= 19) {
-                MultiDex.V19.install(loader, files, dexDir);
+                MultiDex2.V19.install(loader, files, dexDir);
             } else if(Build.VERSION.SDK_INT >= 14) {
-                MultiDex.V14.install(loader, files, dexDir);
+                MultiDex2.V14.install(loader, files, dexDir);
             } else {
-                MultiDex.V4.install(loader, files);
+                MultiDex2.V4.install(loader, files);
             }
         }
 
@@ -171,7 +171,7 @@ public final class MultiDex {
             }
 
             file = (File)i$.next();
-        } while(MultiDexExtractor.verifyZipFile(file));
+        } while(MultiDexExtractor2.verifyZipFile(file));
 
         return false;
     }
@@ -267,7 +267,7 @@ public final class MultiDex {
 
         private static void install(ClassLoader loader, List<File> additionalClassPathEntries) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, IOException {
             int extraSize = additionalClassPathEntries.size();
-            Field pathField = MultiDex.findField(loader, "path");
+            Field pathField = MultiDex2.findField(loader, "path");
             StringBuilder path = new StringBuilder((String)pathField.get(loader));
             String[] extraPaths = new String[extraSize];
             File[] extraFiles = new File[extraSize];
@@ -287,10 +287,10 @@ public final class MultiDex {
             }
 
             pathField.set(loader, path.toString());
-            MultiDex.expandFieldArray(loader, "mPaths", extraPaths);
-            MultiDex.expandFieldArray(loader, "mFiles", extraFiles);
-            MultiDex.expandFieldArray(loader, "mZips", extraZips);
-            MultiDex.expandFieldArray(loader, "mDexs", extraDexs);
+            MultiDex2.expandFieldArray(loader, "mPaths", extraPaths);
+            MultiDex2.expandFieldArray(loader, "mFiles", extraFiles);
+            MultiDex2.expandFieldArray(loader, "mZips", extraZips);
+            MultiDex2.expandFieldArray(loader, "mDexs", extraDexs);
         }
     }
 
@@ -299,13 +299,13 @@ public final class MultiDex {
         }
 
         private static void install(ClassLoader loader, List<File> additionalClassPathEntries, File optimizedDirectory) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException {
-            Field pathListField = MultiDex.findField(loader, "pathList");
+            Field pathListField = MultiDex2.findField(loader, "pathList");
             Object dexPathList = pathListField.get(loader);
-            MultiDex.expandFieldArray(dexPathList, "dexElements", makeDexElements(dexPathList, new ArrayList(additionalClassPathEntries), optimizedDirectory));
+            MultiDex2.expandFieldArray(dexPathList, "dexElements", makeDexElements(dexPathList, new ArrayList(additionalClassPathEntries), optimizedDirectory));
         }
 
         private static Object[] makeDexElements(Object dexPathList, ArrayList<File> files, File optimizedDirectory) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-            Method makeDexElements = MultiDex.findMethod(dexPathList, "makeDexElements", new Class[]{ArrayList.class, File.class});
+            Method makeDexElements = MultiDex2.findMethod(dexPathList, "makeDexElements", new Class[]{ArrayList.class, File.class});
             return (Object[])((Object[])makeDexElements.invoke(dexPathList, new Object[]{files, optimizedDirectory}));
         }
     }
@@ -315,10 +315,10 @@ public final class MultiDex {
         }
 
         private static void install(ClassLoader loader, List<File> additionalClassPathEntries, File optimizedDirectory) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, InvocationTargetException, NoSuchMethodException {
-            Field pathListField = MultiDex.findField(loader, "pathList");
+            Field pathListField = MultiDex2.findField(loader, "pathList");
             Object dexPathList = pathListField.get(loader);
             ArrayList suppressedExceptions = new ArrayList();
-            MultiDex.expandFieldArray(dexPathList, "dexElements", makeDexElements(dexPathList, new ArrayList(additionalClassPathEntries), optimizedDirectory, suppressedExceptions));
+            MultiDex2.expandFieldArray(dexPathList, "dexElements", makeDexElements(dexPathList, new ArrayList(additionalClassPathEntries), optimizedDirectory, suppressedExceptions));
             if(suppressedExceptions.size() > 0) {
                 Iterator suppressedExceptionsField = suppressedExceptions.iterator();
 
@@ -327,7 +327,7 @@ public final class MultiDex {
                     Log.w("MultiDex", "Exception in makeDexElement", dexElementsSuppressedExceptions);
                 }
 
-                Field suppressedExceptionsField1 = MultiDex.findField(loader, "dexElementsSuppressedExceptions");
+                Field suppressedExceptionsField1 = MultiDex2.findField(loader, "dexElementsSuppressedExceptions");
                 IOException[] dexElementsSuppressedExceptions1 = (IOException[])((IOException[])suppressedExceptionsField1.get(loader));
                 if(dexElementsSuppressedExceptions1 == null) {
                     dexElementsSuppressedExceptions1 = (IOException[])suppressedExceptions.toArray(new IOException[suppressedExceptions.size()]);
@@ -344,7 +344,7 @@ public final class MultiDex {
         }
 
         private static Object[] makeDexElements(Object dexPathList, ArrayList<File> files, File optimizedDirectory, ArrayList<IOException> suppressedExceptions) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-            Method makeDexElements = MultiDex.findMethod(dexPathList, "makeDexElements", new Class[]{ArrayList.class, File.class, ArrayList.class});
+            Method makeDexElements = MultiDex2.findMethod(dexPathList, "makeDexElements", new Class[]{ArrayList.class, File.class, ArrayList.class});
             return (Object[])((Object[])makeDexElements.invoke(dexPathList, new Object[]{files, optimizedDirectory, suppressedExceptions}));
         }
     }
