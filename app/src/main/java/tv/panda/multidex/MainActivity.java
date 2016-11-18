@@ -1,10 +1,12 @@
 package tv.panda.multidex;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.common.collect.BiMap;
 
 import java.util.Map;
@@ -12,10 +14,15 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
+    ImageView mIvAvatar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mIvAvatar = (ImageView) findViewById(R.id.iv_avatar);
+        Glide.with(this).load("http://i6.pdim.gs/2ba45403764bbcec0b74fb342242f47d.jpg")
+                .into(mIvAvatar);
 
         // Guava dependency
         BiMap biMap = new BiMap() {
