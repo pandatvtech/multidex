@@ -27,7 +27,7 @@ import java.util.zip.ZipOutputStream;
  * Created by zourongbo on 2016/11/16.
  */
 
-final class MultiDexExtractor {
+final class MultiDexExtractor2 {
     private static final String TAG = "MultiDex";
     private static final String DEX_PREFIX = "classes";
     private static final String DEX_SUFFIX = ".dex";
@@ -42,7 +42,7 @@ final class MultiDexExtractor {
     private static final long NO_VALUE = -1L;
     private static Method sApplyMethod;
 
-    MultiDexExtractor() {
+    MultiDexExtractor2() {
     }
 
     static List<File> load(Context context, ApplicationInfo applicationInfo, File dexDir, boolean forceReload) throws IOException {
@@ -106,7 +106,7 @@ final class MultiDexExtractor {
     }
 
     private static long getZipCrc(File archive) throws IOException {
-        long computedValue = ZipUtil.getZipCrc(archive);
+        long computedValue = ZipUtil2.getZipCrc(archive);
         if(computedValue == -1L) {
             --computedValue;
         }
